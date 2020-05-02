@@ -1,12 +1,11 @@
-import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
-import { User } from './user.interface';
+import { Controller, Get, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
+import { User, UpdateUser } from './user.interface';
 import { UsersService } from './users.service';
-import { TokenService } from './token/token.service';
 
 @Controller('users')
 export class UsersController {
 
-    constructor(private userService: UsersService, private tokenService: TokenService) {}
+    constructor(private userService: UsersService, ) { }
 
     @Post()
     create(@Body() createUserDto: User) {
@@ -19,8 +18,11 @@ export class UsersController {
     }
 
     @Post('login')
-    login(@Body() body) {
-        return this.tokenService.generateToken(body)
+    @HttpCode(200)
+    async login(@Body() body) {
+        const token = await this.userService.login(body);
+        if (token) return token;
+        throw new Error('UnAuthorized User');
     }
 
     @Get(':id')
@@ -29,7 +31,7 @@ export class UsersController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: User) {
+    update(@Param('id') id: string, @Body() updateUserDto: UpdateUser) {
         return this.userService.update(id, updateUserDto);
     }
 
