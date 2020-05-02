@@ -2,17 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { User } from './user.interface';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { TokenService } from './token/token.service';
-const bcrypt = require('bcrypt');
+import { TokenService } from '../shared/token/token.service';
+import { PasswordService } from '../shared/password/password.service';
 
 @Injectable()
 export class UsersService {
-    private users: User[] = [];
 
-    constructor(@InjectModel('User') private userModel: Model<User>, private tokenService: TokenService) { }
+    constructor(@InjectModel('User') private userModel: Model<User>, private tokenService: TokenService, private passwordService: PasswordService) { }
 
     async create(user: User) {
-        user.password = await bcrypt.hash(user.password, 2);
+        user.password = await this.passwordService.hash(user.password);
         const createUser = new this.userModel(user)
         return await createUser.save();
     }
@@ -40,7 +39,7 @@ export class UsersService {
     async login(cred) {
         const user = await this.userModel.findOne({ userName: cred.userName });
         if (!user) return false;
-        if (await bcrypt.compare(cred.password, user.password)) {
+        if (await this.passwordService.compare(cred.password, user.password)) {
             return this.tokenService.generateToken({ name: user.firstName + ' ' + user.lastName, role: user.role });
         }
         return false;

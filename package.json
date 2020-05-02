@@ -30,8 +30,10 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.11",
+    "morgan": "^1.10.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
+    "rotating-file-stream": "^2.1.0",
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
