@@ -8,16 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 @Module({
   imports: [
     SharedModule,
-    MongooseModule.forFeatureAsync([
-      {
-        name: 'User',
-        useFactory: () => {
-          const schema = UserSchema;
-          schema.pre('save', () => console.log('Hello from pre save'));
-          return schema;
-        },
-      },
-    ]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])
   ],
   controllers: [UsersController],
   providers: [UsersService]
