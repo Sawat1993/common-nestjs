@@ -7,6 +7,7 @@ var helmet = require('helmet');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // app.setGlobalPrefix('v1');
   app.use(cors());
   app.use(helmet());
   app.use(morgan('combined', { stream: accessLogStream }));
