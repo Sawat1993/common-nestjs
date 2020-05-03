@@ -28,6 +28,24 @@ export class UsersService {
         return await this.userModel.find({}, { password: 0 }).skip(start).limit(limit);
     }
 
+    async getHierarchy() {
+        return await this.userModel.aggregate([
+            {
+                $graphLookup: {
+                    from: "users",
+                    startWith: "$reportsTo",
+                    connectFromField: "reportsTo",
+                    connectToField: "userName",
+                    as: "reportingHierarchy"
+                }
+            },
+            {
+                $project: { _id: 1, firstName: 1, lastName: 1,
+                "reportingHierarchy._id": 1, "reportingHierarchy.firstName": 1 , "reportingHierarchy.lastName": 1 }
+            }
+        ])
+    }
+
     async update(id, user) {
         return await this.userModel.findByIdAndUpdate(id, { $set: user });
     }

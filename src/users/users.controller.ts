@@ -17,6 +17,13 @@ export class UsersController {
         }
     }
 
+    @Post('login')
+    async login(@Body() body) {
+        const token = await this.userService.login(body);
+        if (token) return token;
+        throw new HttpException('Unauthorized User', HttpStatus.UNAUTHORIZED);
+    }
+
     @Get()
     async findAll(@Query() query: any) {
         const users = (query.start && query.limit) ? await this.userService.filter(query.start, query.limit) :
@@ -25,11 +32,9 @@ export class UsersController {
         throw new HttpException('User Not Founf', HttpStatus.NOT_FOUND);
     }
 
-    @Post('login')
-    async login(@Body() body) {
-        const token = await this.userService.login(body);
-        if (token) return token;
-        throw new HttpException('Unauthorized User', HttpStatus.UNAUTHORIZED);
+    @Get('hierarchy')
+    async getHierarchy () {
+        return this.userService.getHierarchy();
     }
 
     @Get(':id')

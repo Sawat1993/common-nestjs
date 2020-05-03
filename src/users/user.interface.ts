@@ -5,6 +5,7 @@ export interface User extends Document {
     lastName: string;
     userName: string;
     role: string;
+    reportsTo: string;
     password: string;
 }
 
